@@ -1,0 +1,31 @@
+info:
+  name: GetOwnedGames
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{webApiUrl}}/IPlayerService/GetOwnedGames/v1/?key={{steamWebApiKey}}&steamid={{steamId}}&include_appinfo=true&include_played_free_games=true"
+  params:
+    - name: key
+      value: "{{steamWebApiKey}}"
+      type: query
+    - name: steamid
+      value: "{{steamId}}"
+      type: query
+    - name: include_appinfo
+      value: "true"
+      type: query
+    - name: include_played_free_games
+      value: "true"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: https://partner.steamgames.com/doc/webapi/IPlayerService#GetOwnedGames

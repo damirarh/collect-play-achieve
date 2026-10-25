@@ -1,0 +1,28 @@
+info:
+  name: GetPlayerAchievements
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{webApiUrl}}/ISteamUserStats/GetPlayerAchievements/v1/?key={{steamWebApiKey}}&steamid={{steamId}}&appid={{appId}}"
+  params:
+    - name: key
+      value: "{{steamWebApiKey}}"
+      type: query
+    - name: steamid
+      value: "{{steamId}}"
+      type: query
+    - name: appid
+      value: "{{appId}}"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetPlayerAchievements

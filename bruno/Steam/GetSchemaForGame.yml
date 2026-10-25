@@ -1,0 +1,25 @@
+info:
+  name: GetSchemaForGame
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{webApiUrl}}/ISteamUserStats/GetSchemaForGame/v2/?key={{steamWebApiKey}}&appid={{appId}}"
+  params:
+    - name: key
+      value: "{{steamWebApiKey}}"
+      type: query
+    - name: appid
+      value: "{{appId}}"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetSchemaForGame

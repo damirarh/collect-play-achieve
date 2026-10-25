@@ -1,0 +1,19 @@
+info:
+  name: Steam
+  type: folder
+  seq: 1
+
+request:
+  auth: inherit
+  variables:
+    - name: webApiUrl
+      value: https://api.steampowered.com
+    - name: storeApiUrl
+      value: https://store.steampowered.com/api
+    - name: appId
+      value: "2162800"
+      description: Shapez 2 - hidden achievements
+      disabled: true
+    - name: appId
+      value: "1629520"
+      description: A Little to the Left - achievement sets, achievements with counters

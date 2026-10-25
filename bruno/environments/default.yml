@@ -1,0 +1,8 @@
+name: default
+variables:
+  - secret: true
+    name: steamWebApiKey
+    description: Obtain from https://steamcommunity.com/dev/apikey
+  - secret: true
+    name: steamId
+    description: Displayed on https://store.steampowered.com/account/

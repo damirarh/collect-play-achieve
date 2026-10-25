@@ -1,0 +1,24 @@
+info:
+  name: GetAppDetails
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{storeApiUrl}}/appdetails?appids={{appId}}"
+  params:
+    - name: appids
+      value: "{{appId}}"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: |-
+  https://github.com/koksny/SteamBIG/blob/main/docs/STEAM_API.md#2-app-details-api
+  https://github.com/Revadike/InternalSteamWebAPI/wiki/Get-App-Details
