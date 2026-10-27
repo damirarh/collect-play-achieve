@@ -1,0 +1,21 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.4">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AspireUseCliBundle>true</AspireUseCliBundle>
+    <UserSecretsId>986c6e1f-a9a6-4102-903b-3a07eb1a8374</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="..\CollectPlayAchieve.Api\CollectPlayAchieve.Api.csproj"
+      AspireProjectMetadataTypeName="Api"
+    />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.4" />
+  </ItemGroup>
+</Project>
