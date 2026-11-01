@@ -1,0 +1,25 @@
+{
+   "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+   "tasks": [
+      {
+         "name": "Run CSharpier",
+         "group": "pre-commit",
+         "command": "dotnet",
+         "args": ["csharpier", "format", "./api"]
+      },
+      {
+         "name": "Run Prettier",
+         "group": "pre-commit",
+         "cwd": "./web",
+         "command": "pnpm",
+         "args": ["format"]
+      },
+      {
+         "name": "Run ESLint",
+         "group": "pre-commit",
+         "cwd": "./web",
+         "command": "pnpm",
+         "args": ["lint:fix"]
+      }
+   ]
+}
