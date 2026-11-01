@@ -89,3 +89,19 @@ Check formatting without changing files:
 # pnpm
 pnpm format:check
 ```
+
+## Linting
+
+Run lint checks:
+
+```bash
+# pnpm
+pnpm lint
+```
+
+Run lint with automatic fixes:
+
+```bash
+# pnpm
+pnpm lint:fix
+```
