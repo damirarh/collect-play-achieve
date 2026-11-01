@@ -73,3 +73,19 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Formatting
+
+Format files:
+
+```bash
+# pnpm
+pnpm format
+```
+
+Check formatting without changing files:
+
+```bash
+# pnpm
+pnpm format:check
+```
