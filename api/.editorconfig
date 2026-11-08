@@ -1,0 +1,3 @@
+[*.cs]
+# It is generally appropriate to suppress the warning for application code
+dotnet_diagnostic.CA2007.severity = none # Consider calling ConfigureAwait on the awaited task

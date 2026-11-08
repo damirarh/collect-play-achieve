@@ -1,0 +1,2 @@
+# Ignore auto-generated C# files in the Migrations folder
+*.cs

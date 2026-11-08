@@ -1,0 +1,3 @@
+[*.cs]
+# EF Core migration classes are public so the tooling can discover and instantiate them.
+dotnet_diagnostic.CA1515.severity = none # Because an application's API isn't typically referenced from outside the assembly, types can be made internal

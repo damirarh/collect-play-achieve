@@ -15,6 +15,8 @@
 - `api/CollectPlayAchieve.AppHost` is the Aspire entry point. It starts the ASP.NET API and the Nuxt/Vite web app, then configures YARP as the external gateway.
 - The gateway forwards `/` to the web app and `/api/{**catch-all}` to the API, removing the `/api` prefix before forwarding. Keep API calls on this route when working with the integrated app.
 - `api/CollectPlayAchieve.Api/Program.cs` is the minimal ASP.NET Core host; OpenAPI is exposed only in Development. Add API endpoints and services here or in the relevant feature code as the API grows.
+- Database configuration and migration conventions are documented in `docs/database.md`.
+- The tests for the API project are placed in `api/CollectPlayAchieve.Api.Tests` and use TUnit as test framework.
 - `web/` is the Nuxt application; app-level UI lives under `web/app/`. Aspire manages its Vite process when running the AppHost.
 - `bruno/` contains a separate Bruno collection for Steam Web API requests. Its environment declares the Steam API key and Steam ID as secret variables; do not put their values in collection files.
 

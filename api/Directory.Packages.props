@@ -5,7 +5,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
     <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.6.4" />
     <PackageVersion Include="Aspire.Hosting.Yarp" Version="13.6.4" />
+    <PackageVersion Include="TUnit" Version="1.81.10" />
+    <PackageVersion Include="TUnit.AspNetCore" Version="1.81.10" />
+    <PackageVersion Include="JetBrains.dotCover.Framework" Version="1.0.2" />
   </ItemGroup>
 </Project>
