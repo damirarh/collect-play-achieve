@@ -1,0 +1,16 @@
+schemaVersion: "1"
+name: collect-play-achieve
+agent: copilot
+workspace: .
+
+kits:
+  - ./sandbox/cpa
+
+env:
+  UseArtifactsOutput: "true"
+  ArtifactsPath: /home/agent/.cache/collect-play-achieve/artifacts
+  npm_config_store_dir: /home/agent/.cache/pnpm/store
+
+ports:
+  - sandbox: 8080
+  - sandbox: 15075
