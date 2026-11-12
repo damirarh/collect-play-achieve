@@ -18,7 +18,7 @@ args:
     pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
     buildArg: PNPM_VERSION
   aspire_version:
-    default: "13.6.4"
+    default: "13.6.5"
     pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
     buildArg: ASPIRE_VERSION
 
