@@ -6,7 +6,7 @@ description: .NET SDK, Node, pnpm, and Aspire CLI for the project's development 
 
 args:
   dotnet_channel:
-    default: "10.0"
+    default: "11.0"
     pattern: '^[0-9]+\.[0-9]+$'
     buildArg: DOTNET_CHANNEL
   node_version:

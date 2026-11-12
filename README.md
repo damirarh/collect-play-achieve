@@ -3,7 +3,7 @@
 ## Docker Sandbox
 
 The local [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) environment
-adds .NET 10, Node v26.13.0, pnpm 10.34.9, and Aspire CLI 13.6.5 to Copilot.
+adds .NET 11, Node v26.13.0, pnpm 10.34.9, and Aspire CLI 13.6.5 to Copilot.
 It uses a **v3 mixin**, compatible with the `copilot` shortcut as resolved by
 `sbx` v0.51.0. Some Docker documentation still describes that shortcut as v2;
 do not combine this mixin with a v2 workload.

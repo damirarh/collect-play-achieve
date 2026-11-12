@@ -1,6 +1,6 @@
 # Project sandbox tooling
 
-The sandbox includes the .NET 10 SDK, Node, pnpm, and Aspire CLI. Use its
+The sandbox includes the .NET 11 SDK, Node, pnpm, and Aspire CLI. Use its
 private Docker daemon for container-backed resources; never mount the host
 Docker socket or copy host credentials into the sandbox.
 
