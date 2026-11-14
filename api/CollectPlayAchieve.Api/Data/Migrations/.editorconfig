@@ -1,3 +1,7 @@
 [*.cs]
 # EF Core migration classes are public so the tooling can discover and instantiate them.
-dotnet_diagnostic.CA1515.severity = none # Because an application's API isn't typically referenced from outside the assembly, types can be made internal
+dotnet_diagnostic.CA1515.severity = none # Consider making public types internal
+# Generated migration methods receive non-null MigrationBuilder instances from EF Core
+dotnet_diagnostic.CA1062.severity = none # Validate arguments of public methods
+# EF Core includes the timestamp in generated migration type names
+dotnet_diagnostic.CA1707.severity = none # Identifiers should not contain underscores
