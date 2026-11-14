@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
 using CollectPlayAchieve.Api.Data;
+using CollectPlayAchieve.Api.Endpoints;
 using CollectPlayAchieve.Api.Options;
+using Microsoft.AspNetCore.Identity;
 
 [assembly: InternalsVisibleTo("CollectPlayAchieve.Api.Tests")]
 
@@ -12,6 +14,10 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddOptions<AppOptions>().BindConfiguration(AppOptions.SectionName);
 builder.Services.AddAppDbContext();
+builder
+    .Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
 
@@ -22,6 +28,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.MapInitEndpoints();
 
 app.UseHttpsRedirection();
 
