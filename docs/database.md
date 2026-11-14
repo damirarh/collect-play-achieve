@@ -11,7 +11,7 @@
 - Generate migrations for each commit with model changes
 - Run migrations during API project startup
   - Restore the local tools with `dotnet tool restore`.
-  - Then add migrations from the repository root with `dotnet tool run dotnet-ef migrations add <MigrationName> --project api/CollectPlayAchieve.Api --startup-project api/CollectPlayAchieve.Api --output-dir Data/Migrations`.
+  - Then add migrations from the repository root with `dotnet tool run dotnet-ef migrations add <MigrationName> --output-dir Data/Migrations` (`project` and `startupProject` are configured in `.config/dotnet-ef.json`).
   - Do not make any modifications to the generated files.
 - Database file location
   - Data folder is read from the optional `App:DataFolder` setting in `appsettings.json`. Only absolute paths and paths starting with `~` as home-directory shorthand are allowed.
