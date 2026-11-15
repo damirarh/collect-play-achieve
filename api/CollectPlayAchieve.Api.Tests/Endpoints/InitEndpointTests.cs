@@ -1,5 +1,6 @@
 using System.Net;
 using CollectPlayAchieve.Api.Data;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,5 +90,8 @@ internal sealed class InitEndpointTests : ApiTestBase
 
     private sealed record InitStatusResponse(bool RegistrationAvailable);
 
-    private sealed record RegisterRequest(string Username, string Password);
+    private sealed record RegisterRequest(
+        [property: UsedImplicitly] string Username,
+        [property: UsedImplicitly] string Password
+    );
 }

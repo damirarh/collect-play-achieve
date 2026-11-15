@@ -1,5 +1,6 @@
 using System.Data;
 using CollectPlayAchieve.Api.Data;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -91,9 +92,10 @@ internal static class InitEndpoints
     private static string FormatErrors(IdentityResult result) =>
         string.Join(", ", result.Errors.Select(error => error.Description));
 
-    private sealed record InitStatusResponse(bool RegistrationAvailable);
+    private sealed record InitStatusResponse([property: UsedImplicitly] bool RegistrationAvailable);
 
+    [UsedImplicitly]
     private sealed record RegisterRequest(string? Username, string? Password);
 
-    private sealed record RegistrationErrors(string[] Errors);
+    private sealed record RegistrationErrors([property: UsedImplicitly] string[] Errors);
 }
