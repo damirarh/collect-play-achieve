@@ -12,6 +12,7 @@
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.6.5" />
     <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.6.5" />
     <PackageVersion Include="Aspire.Hosting.Yarp" Version="13.6.5" />
+    <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="TUnit" Version="1.83.8" />
     <PackageVersion Include="TUnit.AspNetCore" Version="1.83.8" />
     <PackageVersion Include="JetBrains.dotCover.Framework" Version="1.0.2" />

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CollectPlayAchieve.Api.Tests.Endpoints;
+namespace CollectPlayAchieve.Api.Tests.Features.Auth;
 
-internal sealed class InitEndpointTests : ApiTestBase
+internal sealed class InitEndpointsTests : ApiTestBase
 {
     [Test]
     public async Task Register_CreatesFirstUserAsAdministrator_AndDisablesRegistration()

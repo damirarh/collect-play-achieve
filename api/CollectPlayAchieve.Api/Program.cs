@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using CollectPlayAchieve.Api.Data;
-using CollectPlayAchieve.Api.Endpoints;
+using CollectPlayAchieve.Api.Features.Auth;
+using CollectPlayAchieve.Api.Infrastructure;
 using CollectPlayAchieve.Api.Options;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,6 +19,19 @@ builder
     .Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.Scan(scan =>
+    scan.FromAssemblyOf<Program>()
+        .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+        .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)), publicOnly: false)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+        .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+);
 
 var app = builder.Build();
 
