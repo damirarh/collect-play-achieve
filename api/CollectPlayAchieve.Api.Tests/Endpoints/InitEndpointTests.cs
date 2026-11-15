@@ -1,23 +1,17 @@
 using System.Net;
-using System.Net.Http.Json;
 using CollectPlayAchieve.Api.Data;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TUnit.AspNetCore;
 
 namespace CollectPlayAchieve.Api.Tests.Endpoints;
 
-internal sealed class InitEndpointTests
+internal sealed class InitEndpointTests : ApiTestBase
 {
     [Test]
     public async Task Register_CreatesFirstUserAsAdministrator_AndDisablesRegistration()
     {
-        using var dataDirectory = new TemporaryDataDirectory();
-        await using var factory = new InitTestFactory(dataDirectory.Path);
-        using var client = factory.CreateClient();
+        using var client = Factory.CreateClient();
 
         var initialStatusResponse = await client.GetAsync("/init/status");
         await Assert.That(initialStatusResponse.StatusCode).IsEqualTo(HttpStatusCode.OK);
@@ -36,7 +30,7 @@ internal sealed class InitEndpointTests
         var finalStatus = await finalStatusResponse.Content.ReadFromJsonAsync<InitStatusResponse>();
         await Assert.That(finalStatus?.RegistrationAvailable).IsFalse();
 
-        using var scope = factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         var user = await userManager.FindByNameAsync("admin");
@@ -48,9 +42,7 @@ internal sealed class InitEndpointTests
     [Test]
     public async Task Register_WithInvalidPassword_ReturnsBadRequest_AndKeepsRegistrationAvailable()
     {
-        using var dataDirectory = new TemporaryDataDirectory();
-        await using var factory = new InitTestFactory(dataDirectory.Path);
-        using var client = factory.CreateClient();
+        using var client = Factory.CreateClient();
 
         var registrationResponse = await client.PostAsJsonAsync(
             "/init/register",
@@ -66,9 +58,7 @@ internal sealed class InitEndpointTests
     [Test]
     public async Task Register_WhenAUserAlreadyExists_ReturnsConflict()
     {
-        using var dataDirectory = new TemporaryDataDirectory();
-        await using var factory = new InitTestFactory(dataDirectory.Path);
-        using var client = factory.CreateClient();
+        using var client = Factory.CreateClient();
         var request = new RegisterRequest("admin", "SecurePass123!");
 
         var firstResponse = await client.PostAsJsonAsync("/init/register", request);
@@ -81,9 +71,7 @@ internal sealed class InitEndpointTests
     [Test]
     public async Task Register_ConcurrentRequests_CreateOnlyOneUser()
     {
-        using var dataDirectory = new TemporaryDataDirectory();
-        await using var factory = new InitTestFactory(dataDirectory.Path);
-        using var client = factory.CreateClient();
+        using var client = Factory.CreateClient();
         var request = new RegisterRequest("admin", "SecurePass123!");
 
         var responses = await Task.WhenAll(
@@ -99,30 +87,7 @@ internal sealed class InitEndpointTests
             .IsEqualTo(1);
     }
 
-    private sealed class InitTestFactory(string dataFolder) : TestWebApplicationFactory<Program>
-    {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            base.ConfigureWebHost(builder);
-            builder.ConfigureAppConfiguration(
-                (_, configuration) =>
-                    configuration.AddInMemoryCollection(
-                        new Dictionary<string, string?> { ["App:DataFolder"] = dataFolder }
-                    )
-            );
-        }
-    }
-
     private sealed record InitStatusResponse(bool RegistrationAvailable);
 
     private sealed record RegisterRequest(string Username, string Password);
-
-    private sealed class TemporaryDataDirectory : IDisposable
-    {
-        private readonly DirectoryInfo directory = Directory.CreateTempSubdirectory("cpa-init-");
-
-        public string Path => directory.FullName;
-
-        public void Dispose() => directory.Delete(recursive: true);
-    }
 }
