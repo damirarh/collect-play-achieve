@@ -11,11 +11,11 @@ internal static class InitEndpoints
 {
     private const string AdministratorRole = "Administrator";
 
-    extension(WebApplication app)
+    extension(IEndpointRouteBuilder builder)
     {
-        public WebApplication MapInitEndpoints()
+        public IEndpointRouteBuilder MapInitEndpoints()
         {
-            app.MapGet(
+            builder.MapGet(
                 "/init/status",
                 async (AppDbContext dbContext, CancellationToken cancellationToken) =>
                 {
@@ -24,9 +24,9 @@ internal static class InitEndpoints
                 }
             );
 
-            app.MapPost("/init/register", Register);
+            builder.MapPost("/init/register", Register);
 
-            return app;
+            return builder;
         }
     }
 
