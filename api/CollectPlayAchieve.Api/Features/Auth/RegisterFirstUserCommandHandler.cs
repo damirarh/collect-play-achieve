@@ -1,4 +1,5 @@
 using System.Data;
+using System.Text.Json;
 using CollectPlayAchieve.Api.Data;
 using CollectPlayAchieve.Api.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +16,12 @@ internal class RegisterFirstUserCommandHandler(
 ) : ICommandHandler<RegisterFirstUserCommand>
 {
     private const string AdministratorRole = "Administrator";
+    private static readonly string UsernameKey = JsonNamingPolicy.CamelCase.ConvertName(
+        nameof(RegisterFirstUserCommand.Username)
+    );
+    private static readonly string PasswordKey = JsonNamingPolicy.CamelCase.ConvertName(
+        nameof(RegisterFirstUserCommand.Password)
+    );
 
     public async Task<Result> Handle(
         RegisterFirstUserCommand command,
@@ -23,7 +30,18 @@ internal class RegisterFirstUserCommandHandler(
     {
         if (command.Username is null || command.Password is null)
         {
-            return Result.Failure(RegistrationErrors.InvalidData());
+            var validationErrors = new Dictionary<string, string[]>();
+            if (command.Username is null)
+            {
+                validationErrors[UsernameKey] = ["Username is required."];
+            }
+
+            if (command.Password is null)
+            {
+                validationErrors[PasswordKey] = ["Password is required."];
+            }
+
+            return Result.Failure(RegistrationErrors.InvalidData(validationErrors));
         }
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(
@@ -52,7 +70,7 @@ internal class RegisterFirstUserCommandHandler(
         var createResult = await userManager.CreateAsync(user, command.Password);
         if (!createResult.Succeeded)
         {
-            return Result.Failure(RegistrationErrors.InvalidData(createResult.Errors));
+            return MapCreateResult(createResult);
         }
 
         var addToRoleResult = await userManager.AddToRoleAsync(user, AdministratorRole);
@@ -68,22 +86,43 @@ internal class RegisterFirstUserCommandHandler(
         return Result.Success();
     }
 
+    private static Result MapCreateResult(IdentityResult createResult)
+    {
+        var errors = createResult.Errors.ToList();
+        var validationErrors = new Dictionary<string, string[]>();
+        var usernameErrors = errors
+            .Where(error => error.Code.Contains("UserName", StringComparison.OrdinalIgnoreCase))
+            .Select(error => error.Description)
+            .ToArray();
+        var passwordErrors = errors
+            .Where(error => error.Code.Contains("Password", StringComparison.OrdinalIgnoreCase))
+            .Select(error => error.Description)
+            .ToArray();
+
+        if (usernameErrors.Length != 0)
+        {
+            validationErrors[UsernameKey] = usernameErrors;
+        }
+
+        if (passwordErrors.Length != 0)
+        {
+            validationErrors[PasswordKey] = passwordErrors;
+        }
+
+        return validationErrors.Count == 0
+            ? throw new IdentityException("Failed to create the initial user.", errors)
+            : Result.Failure(RegistrationErrors.InvalidData(validationErrors));
+    }
+
     private static class RegistrationErrors
     {
-        public static Error InvalidData(IEnumerable<IdentityError>? errors = null)
-        {
-            var errorsList = errors?.ToList() ?? new List<IdentityError>();
-            return new Error(
+        public static Error InvalidData(IReadOnlyDictionary<string, string[]> validationErrors) =>
+            new(
                 ErrorType.Validation,
                 "Registration.InvalidData",
-                "Invalid username or password."
-                    + (
-                        errorsList.Count != 0
-                            ? $" Errors: {string.Join(", ", errorsList.Select(e => $"{e.Code}: {e.Description}"))}"
-                            : string.Empty
-                    )
+                "Invalid username or password.",
+                validationErrors
             );
-        }
 
         public static readonly Error UserAlreadyExists = new(
             ErrorType.Conflict,

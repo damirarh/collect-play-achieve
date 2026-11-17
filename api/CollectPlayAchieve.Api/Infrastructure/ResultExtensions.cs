@@ -6,6 +6,15 @@ internal static class ResultExtensions
     {
         public IResult ToProblemDetails()
         {
+            if (result.Error.Type == ErrorType.Validation)
+            {
+                return TypedResults.ValidationProblem(
+                    result.Error.ValidationErrors ?? new Dictionary<string, string[]>(),
+                    title: result.Error.Code,
+                    detail: result.Error.Description
+                );
+            }
+
             return TypedResults.Problem(
                 title: result.Error.Code,
                 detail: result.Error.Description,

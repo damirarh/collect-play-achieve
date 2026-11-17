@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using CollectPlayAchieve.Api.Data;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
@@ -41,15 +42,89 @@ internal sealed class InitEndpointsTests : ApiTestBase
     }
 
     [Test]
-    public async Task Register_WithInvalidPassword_ReturnsBadRequest_AndKeepsRegistrationAvailable()
+    [Arguments("admin", "weak", "password")]
+    [Arguments("invalid name", "SecurePass123!", "username")]
+    public async Task Register_WithInvalidCredentials_ReturnsFieldErrors_AndKeepsRegistrationAvailable(
+        string username,
+        string password,
+        string field
+    )
     {
         using var client = Factory.CreateClient();
 
         var registrationResponse = await client.PostAsJsonAsync(
             "/init/register",
-            new RegisterRequest("admin", "weak")
+            new RegisterRequest(username, password)
         );
         await Assert.That(registrationResponse.StatusCode).IsEqualTo(HttpStatusCode.BadRequest);
+
+        var problem = await registrationResponse.Content.ReadFromJsonAsync<JsonElement>();
+        await Assert
+            .That(problem.GetProperty("title").GetString())
+            .IsEqualTo("Registration.InvalidData");
+        await Assert
+            .That(problem.GetProperty("detail").GetString())
+            .IsEqualTo("Invalid username or password.");
+        var errors = problem.GetProperty("errors");
+        await Assert.That(errors.EnumerateObject().Count()).IsEqualTo(1);
+        var descriptions = errors
+            .GetProperty(field)
+            .EnumerateArray()
+            .Select(error => error.GetString())
+            .ToArray();
+        var describer = new IdentityErrorDescriber();
+        string?[] expectedDescriptions =
+            field == "username"
+                ? [describer.InvalidUserName(username).Description]
+                :
+                [
+                    describer.PasswordTooShort(6).Description,
+                    describer.PasswordRequiresNonAlphanumeric().Description,
+                    describer.PasswordRequiresDigit().Description,
+                    describer.PasswordRequiresUpper().Description,
+                ];
+        await Assert.That(descriptions).IsEquivalentTo(expectedDescriptions);
+
+        var statusResponse = await client.GetAsync("/init/status");
+        var status = await statusResponse.Content.ReadFromJsonAsync<InitStatusResponse>();
+        await Assert.That(status?.RegistrationAvailable).IsTrue();
+    }
+
+    [Test]
+    [Arguments(null, "SecurePass123!")]
+    [Arguments("admin", null)]
+    [Arguments(null, null)]
+    public async Task Register_WithNullCredentials_ReturnsRequiredFieldErrors(
+        string? username,
+        string? password
+    )
+    {
+        using var client = Factory.CreateClient();
+
+        var response = await client.PostAsJsonAsync(
+            "/init/register",
+            new RegisterRequest(username, password)
+        );
+
+        await Assert.That(response.StatusCode).IsEqualTo(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var errors = problem.GetProperty("errors");
+        await Assert
+            .That(errors.EnumerateObject().Count())
+            .IsEqualTo((username is null ? 1 : 0) + (password is null ? 1 : 0));
+        if (username is null)
+        {
+            await Assert
+                .That(errors.GetProperty("username")[0].GetString())
+                .IsEqualTo("Username is required.");
+        }
+
+        if (password is null)
+        {
+            await Assert
+                .That(errors.GetProperty("password")[0].GetString())
+                .IsEqualTo("Password is required.");
+        }
 
         var statusResponse = await client.GetAsync("/init/status");
         var status = await statusResponse.Content.ReadFromJsonAsync<InitStatusResponse>();
@@ -91,7 +166,7 @@ internal sealed class InitEndpointsTests : ApiTestBase
     private sealed record InitStatusResponse(bool RegistrationAvailable);
 
     private sealed record RegisterRequest(
-        [property: UsedImplicitly] string Username,
-        [property: UsedImplicitly] string Password
+        [property: UsedImplicitly] string? Username,
+        [property: UsedImplicitly] string? Password
     );
 }
