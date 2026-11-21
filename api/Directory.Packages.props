@@ -15,6 +15,7 @@
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="TUnit" Version="1.83.8" />
     <PackageVersion Include="TUnit.AspNetCore" Version="1.83.8" />
+    <PackageVersion Include="TUnit.Mocks" Version="1.83.8" />
     <PackageVersion Include="JetBrains.dotCover.Framework" Version="1.0.2" />
   </ItemGroup>
 </Project>

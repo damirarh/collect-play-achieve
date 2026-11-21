@@ -35,6 +35,15 @@
           "TUnit.AspNetCore.Core": "1.83.8"
         }
       },
+      "TUnit.Mocks": {
+        "type": "Direct",
+        "requested": "[1.83.8, )",
+        "resolved": "1.83.8",
+        "contentHash": "m2ShYFm9uFXPlaI3mEvV095HUkF1aCwZxtgQKC82IQeHos9BIDUwz3cXT/xslb7QhB8l84vTDu8SYaeFDVsBOA==",
+        "dependencies": {
+          "TUnit.Core": "1.83.8"
+        }
+      },
       "JetBrains.Profiler.Api": {
         "type": "Transitive",
         "resolved": "1.3.0",
@@ -456,14 +465,6 @@
           "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.20.1, 2.0.0)"
         }
       },
-      "Scrutor": {
-        "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "wHWaroody48jnlLoq/REwUltIFLxplXyHTP+sttrc8P7+jkiVqf38afDidJNv4qgD/6zz2NKOYg06xLZ1bG7wQ==",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyModel": "10.0.0"
-        }
-      },
       "SQLite": {
         "type": "Transitive",
         "resolved": "3.53.4",
@@ -607,6 +608,15 @@
           "Microsoft.Extensions.Logging": "11.0.0",
           "SQLitePCLRaw.bundle_e_sqlite3": "3.0.5",
           "SQLitePCLRaw.core": "3.0.5"
+        }
+      },
+      "Scrutor": {
+        "type": "CentralTransitive",
+        "requested": "[7.0.0, )",
+        "resolved": "7.0.0",
+        "contentHash": "wHWaroody48jnlLoq/REwUltIFLxplXyHTP+sttrc8P7+jkiVqf38afDidJNv4qgD/6zz2NKOYg06xLZ1bG7wQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyModel": "10.0.0"
         }
       }
     }

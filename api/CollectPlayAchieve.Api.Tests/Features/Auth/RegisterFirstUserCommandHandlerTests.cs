@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using TUnit.Mocks;
+using static TUnit.Mocks.Arguments.Arg;
 
 namespace CollectPlayAchieve.Api.Tests.Features.Auth;
 
@@ -21,10 +23,7 @@ internal sealed class RegisterFirstUserCommandHandlerTests : ApiTestBase
             new IdentityError { Code = "StoreFailure", Description = "Internal store details." },
             new IdentityError { Code = "UserNamePassword", Description = "Invalid credentials." }
         );
-        using var userManager = ActivatorUtilities.CreateInstance<FailingUserManager>(
-            services,
-            identityResult
-        );
+        var userManager = CreateUserManager(identityResult);
         var handler = new RegisterFirstUserCommandHandler(
             services.GetRequiredService<AppDbContext>(),
             userManager,
@@ -68,10 +67,7 @@ internal sealed class RegisterFirstUserCommandHandlerTests : ApiTestBase
                     Description = "Internal store details.",
                 },
             };
-        using var userManager = ActivatorUtilities.CreateInstance<FailingUserManager>(
-            services,
-            IdentityResult.Failed(identityErrors)
-        );
+        var userManager = CreateUserManager(IdentityResult.Failed(identityErrors));
         var handler = new RegisterFirstUserCommandHandler(
             services.GetRequiredService<AppDbContext>(),
             userManager,
@@ -102,29 +98,20 @@ internal sealed class RegisterFirstUserCommandHandlerTests : ApiTestBase
         await Assert.That(await dbContext.Roles.CountAsync()).IsEqualTo(0);
     }
 
-    private sealed class FailingUserManager(
-        IUserStore<IdentityUser> store,
-        IOptions<IdentityOptions> options,
-        IPasswordHasher<IdentityUser> passwordHasher,
-        ILookupNormalizer normalizer,
-        IdentityErrorDescriber errorDescriber,
-        IServiceProvider services,
-        ILogger<UserManager<IdentityUser>> logger,
-        IdentityResult identityResult
-    )
-        : UserManager<IdentityUser>(
-            store,
-            options,
-            passwordHasher,
-            [],
-            [],
-            normalizer,
-            errorDescriber,
-            services,
-            logger
-        )
+    private static UserManager<IdentityUser> CreateUserManager(IdentityResult createResult)
     {
-        public override Task<IdentityResult> CreateAsync(IdentityUser user, string password) =>
-            Task.FromResult(identityResult);
+        var mock = UserManager<IdentityUser>.Mock(
+            IUserStore<IdentityUser>.Mock(),
+            IOptions<IdentityOptions>.Mock(),
+            IPasswordHasher<IdentityUser>.Mock(),
+            [],
+            [],
+            ILookupNormalizer.Mock(),
+            IdentityErrorDescriber.Mock(),
+            IServiceProvider.Mock(),
+            ILogger<UserManager<IdentityUser>>.Mock()
+        );
+        mock.CreateAsync(Any(), Any()).Returns(createResult);
+        return mock.Object;
     }
 }
