@@ -2,7 +2,6 @@ using System.Data;
 using System.Text.Json;
 using CollectPlayAchieve.Api.Data;
 using CollectPlayAchieve.Api.Infrastructure;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,8 +12,7 @@ internal sealed record RegisterFirstUserCommand(string? Username, string? Passwo
 internal class RegisterFirstUserCommandHandler(
     AppDbContext dbContext,
     UserManager<IdentityUser> userManager,
-    RoleManager<IdentityRole> roleManager,
-    IValidator<RegisterFirstUserCommand> validator
+    RoleManager<IdentityRole> roleManager
 ) : ICommandHandler<RegisterFirstUserCommand>
 {
     private const string AdministratorRole = "Administrator";
@@ -30,20 +28,6 @@ internal class RegisterFirstUserCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var validationResult = await validator.ValidateAsync(command, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            var validationErrors = validationResult
-                .Errors.GroupBy(failure =>
-                    JsonNamingPolicy.CamelCase.ConvertName(failure.PropertyName)
-                )
-                .ToDictionary(
-                    group => group.Key,
-                    group => group.Select(failure => failure.ErrorMessage).ToArray()
-                );
-            return Result.Failure(RegistrationErrors.InvalidData(validationErrors));
-        }
-
         await using var transaction = await dbContext.Database.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken

@@ -1,13 +1,10 @@
 using CollectPlayAchieve.Api.Data;
 using CollectPlayAchieve.Api.Features.Auth;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using TUnit.Mocks;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace CollectPlayAchieve.Api.Tests.Features.Auth;
 
@@ -28,8 +25,7 @@ internal sealed class RegisterFirstUserCommandHandlerTests : ApiTestBase
         var handler = new RegisterFirstUserCommandHandler(
             services.GetRequiredService<AppDbContext>(),
             userManager,
-            services.GetRequiredService<RoleManager<IdentityRole>>(),
-            services.GetRequiredService<IValidator<RegisterFirstUserCommand>>()
+            services.GetRequiredService<RoleManager<IdentityRole>>()
         );
 
         var result = await handler.Handle(
@@ -73,8 +69,7 @@ internal sealed class RegisterFirstUserCommandHandlerTests : ApiTestBase
         var handler = new RegisterFirstUserCommandHandler(
             services.GetRequiredService<AppDbContext>(),
             userManager,
-            services.GetRequiredService<RoleManager<IdentityRole>>(),
-            services.GetRequiredService<IValidator<RegisterFirstUserCommand>>()
+            services.GetRequiredService<RoleManager<IdentityRole>>()
         );
         var expectedMessage =
             "Failed to create the initial user."
