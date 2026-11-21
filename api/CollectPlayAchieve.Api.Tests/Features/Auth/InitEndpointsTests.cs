@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.Json;
 using CollectPlayAchieve.Api.Data;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Identity;
@@ -56,24 +55,9 @@ internal sealed class InitEndpointsTests : ApiTestBase
             "/init/register",
             new RegisterRequest(username, password)
         );
-        await Assert.That(registrationResponse.StatusCode).IsEqualTo(HttpStatusCode.BadRequest);
 
-        var problem = await registrationResponse.Content.ReadFromJsonAsync<JsonElement>();
-        await Assert
-            .That(problem.GetProperty("title").GetString())
-            .IsEqualTo("Registration.InvalidData");
-        await Assert
-            .That(problem.GetProperty("detail").GetString())
-            .IsEqualTo("Invalid username or password.");
-        var errors = problem.GetProperty("errors");
-        await Assert.That(errors.EnumerateObject().Count()).IsEqualTo(1);
-        var descriptions = errors
-            .GetProperty(field)
-            .EnumerateArray()
-            .Select(error => error.GetString())
-            .ToArray();
         var describer = new IdentityErrorDescriber();
-        string?[] expectedDescriptions =
+        string[] expectedDescriptions =
             field == "username"
                 ? [describer.InvalidUserName(username).Description]
                 :
@@ -83,7 +67,18 @@ internal sealed class InitEndpointsTests : ApiTestBase
                     describer.PasswordRequiresDigit().Description,
                     describer.PasswordRequiresUpper().Description,
                 ];
-        await Assert.That(descriptions).IsEquivalentTo(expectedDescriptions);
+        IReadOnlyDictionary<string, string[]> expectedErrors = new Dictionary<string, string[]>
+        {
+            [field] = expectedDescriptions,
+        };
+        await Assert
+            .That(registrationResponse)
+            .MatchesValidationProblemDetails(
+                (int)HttpStatusCode.BadRequest,
+                expectedErrors,
+                title: "Registration.InvalidData",
+                detail: "Invalid username or password."
+            );
 
         var statusResponse = await client.GetAsync("/init/status");
         var status = await statusResponse.Content.ReadFromJsonAsync<InitStatusResponse>();
@@ -106,25 +101,25 @@ internal sealed class InitEndpointsTests : ApiTestBase
             new RegisterRequest(username, password)
         );
 
-        await Assert.That(response.StatusCode).IsEqualTo(HttpStatusCode.BadRequest);
-        var problem = await response.Content.ReadFromJsonAsync<JsonElement>();
-        var errors = problem.GetProperty("errors");
-        await Assert
-            .That(errors.EnumerateObject().Count())
-            .IsEqualTo((username is null ? 1 : 0) + (password is null ? 1 : 0));
+        var expectedErrors = new Dictionary<string, string[]>();
         if (username is null)
         {
-            await Assert
-                .That(errors.GetProperty("username")[0].GetString())
-                .IsEqualTo("Username is required.");
+            expectedErrors["username"] = ["Username is required."];
         }
 
         if (password is null)
         {
-            await Assert
-                .That(errors.GetProperty("password")[0].GetString())
-                .IsEqualTo("Password is required.");
+            expectedErrors["password"] = ["Password is required."];
         }
+
+        await Assert
+            .That(response)
+            .MatchesValidationProblemDetails(
+                (int)HttpStatusCode.BadRequest,
+                expectedErrors,
+                title: "Registration.InvalidData",
+                detail: "Invalid username or password."
+            );
 
         var statusResponse = await client.GetAsync("/init/status");
         var status = await statusResponse.Content.ReadFromJsonAsync<InitStatusResponse>();
@@ -141,7 +136,13 @@ internal sealed class InitEndpointsTests : ApiTestBase
         var secondResponse = await client.PostAsJsonAsync("/init/register", request);
 
         await Assert.That(firstResponse.StatusCode).IsEqualTo(HttpStatusCode.OK);
-        await Assert.That(secondResponse.StatusCode).IsEqualTo(HttpStatusCode.Conflict);
+        await Assert
+            .That(secondResponse)
+            .MatchesProblemDetails(
+                (int)HttpStatusCode.Conflict,
+                title: "Registration.UserAlreadyExists",
+                detail: "A user already exists. Registration is not available."
+            );
     }
 
     [Test]
