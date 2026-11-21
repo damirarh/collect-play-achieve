@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.Json;
 using CollectPlayAchieve.Api.Data;
 using CollectPlayAchieve.Api.Infrastructure;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,8 @@ internal sealed record RegisterFirstUserCommand(string? Username, string? Passwo
 internal class RegisterFirstUserCommandHandler(
     AppDbContext dbContext,
     UserManager<IdentityUser> userManager,
-    RoleManager<IdentityRole> roleManager
+    RoleManager<IdentityRole> roleManager,
+    IValidator<RegisterFirstUserCommand> validator
 ) : ICommandHandler<RegisterFirstUserCommand>
 {
     private const string AdministratorRole = "Administrator";
@@ -28,19 +30,17 @@ internal class RegisterFirstUserCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        if (command.Username is null || command.Password is null)
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            var validationErrors = new Dictionary<string, string[]>();
-            if (command.Username is null)
-            {
-                validationErrors[UsernameKey] = ["Username is required."];
-            }
-
-            if (command.Password is null)
-            {
-                validationErrors[PasswordKey] = ["Password is required."];
-            }
-
+            var validationErrors = validationResult
+                .Errors.GroupBy(failure =>
+                    JsonNamingPolicy.CamelCase.ConvertName(failure.PropertyName)
+                )
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Select(failure => failure.ErrorMessage).ToArray()
+                );
             return Result.Failure(RegistrationErrors.InvalidData(validationErrors));
         }
 
@@ -67,7 +67,7 @@ internal class RegisterFirstUserCommandHandler(
         }
 
         var user = new IdentityUser { UserName = command.Username };
-        var createResult = await userManager.CreateAsync(user, command.Password);
+        var createResult = await userManager.CreateAsync(user, command.Password ?? string.Empty);
         if (!createResult.Succeeded)
         {
             return MapCreateResult(createResult);

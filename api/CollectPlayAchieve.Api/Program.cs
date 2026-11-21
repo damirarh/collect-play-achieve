@@ -3,6 +3,7 @@ using CollectPlayAchieve.Api.Data;
 using CollectPlayAchieve.Api.Features.Auth;
 using CollectPlayAchieve.Api.Infrastructure;
 using CollectPlayAchieve.Api.Options;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 
 [assembly: InternalsVisibleTo("CollectPlayAchieve.Api.Tests")]
@@ -31,6 +32,9 @@ builder.Services.Scan(scan =>
         .AsImplementedInterfaces()
         .WithScopedLifetime()
         .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+        .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)), publicOnly: false)
         .AsImplementedInterfaces()
         .WithScopedLifetime()
 );
