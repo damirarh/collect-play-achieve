@@ -30,7 +30,7 @@ internal sealed class InitEndpoints : IEndpoint
                     + "validation errors; registration is unavailable once a user exists. "
                     + "Unexpected errors return a problem containing a traceId."
             )
-            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status204NoContent)
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
@@ -53,7 +53,7 @@ internal sealed class InitEndpoints : IEndpoint
     {
         var command = new RegisterFirstUserCommand(request?.Username, request?.Password);
         var result = await commandHandler.Handle(command, cancellationToken);
-        return result.IsSuccess ? TypedResults.Ok() : result.ToProblemDetails();
+        return result.IsSuccess ? TypedResults.NoContent() : result.ToProblemDetails();
     }
 
     [UsedImplicitly]

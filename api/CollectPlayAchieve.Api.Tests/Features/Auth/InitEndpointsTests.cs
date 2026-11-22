@@ -24,7 +24,7 @@ internal sealed class InitEndpointsTests : ApiTestBase
             "/init/register",
             new RegisterRequest("admin", "SecurePass123!")
         );
-        await Assert.That(registrationResponse.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        await Assert.That(registrationResponse.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
 
         var finalStatusResponse = await client.GetAsync("/init/status");
         await Assert.That(finalStatusResponse.StatusCode).IsEqualTo(HttpStatusCode.OK);
@@ -135,7 +135,7 @@ internal sealed class InitEndpointsTests : ApiTestBase
         var firstResponse = await client.PostAsJsonAsync("/init/register", request);
         var secondResponse = await client.PostAsJsonAsync("/init/register", request);
 
-        await Assert.That(firstResponse.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        await Assert.That(firstResponse.StatusCode).IsEqualTo(HttpStatusCode.NoContent);
         await Assert
             .That(secondResponse)
             .MatchesProblemDetails(
@@ -157,7 +157,7 @@ internal sealed class InitEndpointsTests : ApiTestBase
         );
 
         await Assert
-            .That(responses.Count(response => response.StatusCode == HttpStatusCode.OK))
+            .That(responses.Count(response => response.StatusCode == HttpStatusCode.NoContent))
             .IsEqualTo(1);
         await Assert
             .That(responses.Count(response => response.StatusCode == HttpStatusCode.Conflict))
