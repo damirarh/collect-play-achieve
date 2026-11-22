@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CollectPlayAchieve.Api.Data;
 using CollectPlayAchieve.Api.Infrastructure;
 using JetBrains.Annotations;
@@ -12,7 +13,12 @@ internal sealed record InitStatusQuery : IQuery<InitStatusResponse>
     public static InitStatusQuery Instance { get; } = new();
 }
 
-internal sealed record InitStatusResponse([property: UsedImplicitly] bool RegistrationAvailable);
+[Description("Availability of initial administrator registration.")]
+internal sealed record InitStatusResponse(
+    [property: UsedImplicitly]
+    [property: Description("True when no user exists and initial registration is available.")]
+        bool RegistrationAvailable
+);
 
 internal class InitStatusQueryHandler(AppDbContext dbContext)
     : IQueryHandler<InitStatusQuery, InitStatusResponse>
