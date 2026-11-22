@@ -61,7 +61,7 @@ internal sealed class UnhandledExceptionHandlerTests : ApiTestBase
             .That(response)
             .MatchesProblemDetails(
                 (int)HttpStatusCode.InternalServerError,
-                title: "Global.InternalServerError",
+                title: "Common.InternalServerError",
                 detail: "An unexpected error occurred.",
                 type: "https://tools.ietf.org/html/rfc9110#section-15.6.1"
             );

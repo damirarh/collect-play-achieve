@@ -5,4 +5,5 @@ internal enum ErrorType
     None,
     Validation,
     Conflict,
+    InternalServerError,
 }

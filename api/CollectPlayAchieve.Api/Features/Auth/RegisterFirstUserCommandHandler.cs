@@ -35,7 +35,7 @@ internal class RegisterFirstUserCommandHandler(
 
         if (await dbContext.Users.AnyAsync(cancellationToken))
         {
-            return Result.Failure(RegistrationErrors.UserAlreadyExists);
+            return Result.Failure(Error.Registration.UserAlreadyExists);
         }
 
         if (!await roleManager.RoleExistsAsync(AdministratorRole))
@@ -95,23 +95,6 @@ internal class RegisterFirstUserCommandHandler(
 
         return validationErrors.Count == 0
             ? throw new IdentityException("Failed to create the initial user.", errors)
-            : Result.Failure(RegistrationErrors.InvalidData(validationErrors));
-    }
-
-    private static class RegistrationErrors
-    {
-        public static Error InvalidData(IReadOnlyDictionary<string, string[]> validationErrors) =>
-            new(
-                ErrorType.Validation,
-                "Registration.InvalidData",
-                "Invalid username or password.",
-                validationErrors
-            );
-
-        public static readonly Error UserAlreadyExists = new(
-            ErrorType.Conflict,
-            "Registration.UserAlreadyExists",
-            "A user already exists. Registration is not available."
-        );
+            : Result.Failure(Error.Common.ValidationFailed(validationErrors));
     }
 }

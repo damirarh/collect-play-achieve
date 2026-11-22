@@ -32,7 +32,7 @@ internal sealed class ValidationDecoratorTests
 
         await Assert.That(result.IsFailure).IsTrue();
         await Assert.That(result.Error.Type).IsEqualTo(ErrorType.Validation);
-        await Assert.That(result.Error.Code).IsEqualTo("ValidationError");
+        await Assert.That(result.Error.Code).IsEqualTo("Common.ValidationFailed");
         await Assert
             .That(result.Error.Description)
             .IsEqualTo("One or more validation errors occurred.");
@@ -224,11 +224,7 @@ internal sealed class ValidationDecoratorTests
             IQueryHandler<TestRequest, string>
     {
         public Result<string> Result { get; } =
-            fail
-                ? Result<string>.Failure(
-                    new Error(ErrorType.Conflict, "Conflict", "Already handled.")
-                )
-                : Result<string>.Success("Handled");
+            fail ? Result<string>.Failure(TestError.Conflict) : Result<string>.Success("Handled");
 
         public int Calls { get; private set; }
 

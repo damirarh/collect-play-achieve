@@ -34,8 +34,10 @@ internal sealed class RegisterFirstUserCommandHandlerTests : ApiTestBase
         );
 
         await Assert.That(result.IsFailure).IsTrue();
-        await Assert.That(result.Error.Code).IsEqualTo("Registration.InvalidData");
-        await Assert.That(result.Error.Description).IsEqualTo("Invalid username or password.");
+        await Assert.That(result.Error.Code).IsEqualTo("Common.ValidationFailed");
+        await Assert
+            .That(result.Error.Description)
+            .IsEqualTo("One or more validation errors occurred.");
         var errors = result.Error.ValidationErrors!;
         await Assert.That(errors.Count).IsEqualTo(2);
         await Assert.That(errors["username"].Length).IsEqualTo(2);

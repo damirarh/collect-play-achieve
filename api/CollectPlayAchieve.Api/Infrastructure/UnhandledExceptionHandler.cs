@@ -18,8 +18,8 @@ internal sealed partial class UnhandledExceptionHandler(ILogger<UnhandledExcepti
         var problem = new ProblemDetails
         {
             Type = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
-            Title = "Global.InternalServerError",
-            Detail = "An unexpected error occurred.",
+            Title = Error.Common.InternalServerError.Code,
+            Detail = Error.Common.InternalServerError.Description,
             Status = StatusCodes.Status500InternalServerError,
             Extensions = { ["traceId"] = traceId },
         };

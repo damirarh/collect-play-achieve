@@ -72,10 +72,7 @@ internal static class ValidationDecorator
     }
 
     private static Error CreateValidationError(IEnumerable<ValidationFailure> failures) =>
-        new(
-            ErrorType.Validation,
-            "ValidationError",
-            "One or more validation errors occurred.",
+        Error.Common.ValidationFailed(
             failures
                 .GroupBy(failure => JsonNamingPolicy.CamelCase.ConvertName(failure.PropertyName))
                 .ToDictionary(

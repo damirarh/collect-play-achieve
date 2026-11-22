@@ -8,7 +8,7 @@ internal sealed class ResultExtensionsTests
     [Test]
     public async Task Validation_WithoutFieldErrors_ReturnsValidationProblemWithEmptyErrors()
     {
-        var result = Result.Failure(new Error(ErrorType.Validation, "Invalid", "Invalid input."));
+        var result = Result.Failure(TestError.ValidationWithoutFieldErrors);
 
         var response = (ValidationProblem)result.ToProblemDetails();
 
@@ -26,9 +26,7 @@ internal sealed class ResultExtensionsTests
             ["username"] = ["Username is required."],
             ["password"] = ["Password is too short.", "Password requires a digit."],
         };
-        var result = Result.Failure(
-            new Error(ErrorType.Validation, "Invalid", "Invalid input.", validationErrors)
-        );
+        var result = Result.Failure(Error.Common.ValidationFailed(validationErrors));
 
         var response = (ValidationProblem)result.ToProblemDetails();
 
@@ -44,7 +42,7 @@ internal sealed class ResultExtensionsTests
     [Test]
     public async Task Conflict_PreservesOrdinaryProblemDetails()
     {
-        var result = Result.Failure(new Error(ErrorType.Conflict, "Conflict", "Already exists."));
+        var result = Result.Failure(TestError.Conflict);
 
         var response = (ProblemHttpResult)result.ToProblemDetails();
 

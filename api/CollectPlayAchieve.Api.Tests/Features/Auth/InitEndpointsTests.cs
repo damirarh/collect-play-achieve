@@ -76,8 +76,8 @@ internal sealed class InitEndpointsTests : ApiTestBase
             .MatchesValidationProblemDetails(
                 (int)HttpStatusCode.BadRequest,
                 expectedErrors,
-                title: "Registration.InvalidData",
-                detail: "Invalid username or password."
+                title: "Common.ValidationFailed",
+                detail: "One or more validation errors occurred."
             );
 
         var statusResponse = await client.GetAsync("/init/status");
@@ -117,7 +117,7 @@ internal sealed class InitEndpointsTests : ApiTestBase
             .MatchesValidationProblemDetails(
                 (int)HttpStatusCode.BadRequest,
                 expectedErrors,
-                title: "ValidationError",
+                title: "Common.ValidationFailed",
                 detail: "One or more validation errors occurred."
             );
 
