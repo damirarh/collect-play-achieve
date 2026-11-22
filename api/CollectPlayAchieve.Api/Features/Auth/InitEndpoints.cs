@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using CollectPlayAchieve.Api.Infrastructure;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CollectPlayAchieve.Api.Features.Auth;
 
@@ -46,11 +48,13 @@ internal sealed class InitEndpoints : IEndpoint
     }
 
     private static async Task<IResult> RegisterFirstUser(
-        RegisterFirstUserRequest? request,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] RegisterFirstUserRequest request,
         ICommandHandler<RegisterFirstUserCommand> commandHandler,
         CancellationToken cancellationToken
     )
     {
+        // request will be null if the body is empty, but the parameter is non-nullable to generate correct OpenAPI documentation
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var command = new RegisterFirstUserCommand(request?.Username, request?.Password);
         var result = await commandHandler.Handle(command, cancellationToken);
         return result.IsSuccess ? TypedResults.NoContent() : result.ToProblemDetails();
@@ -59,9 +63,8 @@ internal sealed class InitEndpoints : IEndpoint
     [UsedImplicitly]
     [Description("Credentials for the initial administrator.")]
     private sealed record RegisterFirstUserRequest(
-        [property: Description("Required username for the initial administrator.")]
-            string? Username,
+        [property: Description("Required username for the initial administrator.")] string Username,
         [property: Description("Required password that satisfies the configured identity policy.")]
-            string? Password
+            string Password
     );
 }
