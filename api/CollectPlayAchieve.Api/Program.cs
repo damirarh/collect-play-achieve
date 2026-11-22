@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using CollectPlayAchieve.Api.Data;
-using CollectPlayAchieve.Api.Features.Auth;
 using CollectPlayAchieve.Api.Infrastructure;
 using CollectPlayAchieve.Api.Options;
 using FluentValidation;
@@ -55,6 +54,9 @@ builder.Services.Scan(scan =>
         .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)), publicOnly: false)
         .AsImplementedInterfaces()
         .WithScopedLifetime()
+        .AddClasses(classes => classes.AssignableTo<IEndpoint>(), publicOnly: false)
+        .As<IEndpoint>()
+        .WithTransientLifetime()
 );
 
 builder.Services.TryDecorate(
@@ -79,7 +81,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapInitEndpoints();
+app.MapEndpoints();
 
 app.UseHttpsRedirection();
 

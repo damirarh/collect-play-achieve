@@ -3,17 +3,13 @@ using JetBrains.Annotations;
 
 namespace CollectPlayAchieve.Api.Features.Auth;
 
-internal static class InitEndpoints
+[UsedImplicitly]
+internal sealed class InitEndpoints : IEndpoint
 {
-    extension(IEndpointRouteBuilder builder)
+    public void MapEndpoint(IEndpointRouteBuilder builder)
     {
-        public IEndpointRouteBuilder MapInitEndpoints()
-        {
-            builder.MapGet("/init/status", GetInitStatus);
-            builder.MapPost("/init/register", RegisterFirstUser);
-
-            return builder;
-        }
+        builder.MapGet("/init/status", GetInitStatus);
+        builder.MapPost("/init/register", RegisterFirstUser);
     }
 
     private static async Task<IResult> GetInitStatus(
