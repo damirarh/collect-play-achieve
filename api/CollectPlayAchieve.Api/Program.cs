@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 using CollectPlayAchieve.Api.Data;
 using CollectPlayAchieve.Api.Infrastructure;
 using CollectPlayAchieve.Api.Options;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 
 [assembly: InternalsVisibleTo("CollectPlayAchieve.Api.Tests")]
@@ -25,51 +24,10 @@ builder
     .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.Scan(scan =>
-    scan.FromAssemblyOf<Program>()
-        .AddClasses(
-            classes =>
-                classes
-                    .AssignableTo(typeof(IQueryHandler<,>))
-                    .Where(type => type.DeclaringType != typeof(ValidationDecorator)),
-            publicOnly: false
-        )
-        .AsImplementedInterfaces()
-        .WithScopedLifetime()
-        .AddClasses(
-            classes =>
-                classes
-                    .AssignableTo(typeof(ICommandHandler<>))
-                    .Where(type => type.DeclaringType != typeof(ValidationDecorator)),
-            publicOnly: false
-        )
-        .AsImplementedInterfaces()
-        .WithScopedLifetime()
-        .AddClasses(
-            classes =>
-                classes
-                    .AssignableTo(typeof(ICommandHandler<,>))
-                    .Where(type => type.DeclaringType != typeof(ValidationDecorator)),
-            publicOnly: false
-        )
-        .AsImplementedInterfaces()
-        .WithScopedLifetime()
-        .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)), publicOnly: false)
-        .AsImplementedInterfaces()
-        .WithScopedLifetime()
-        .AddClasses(classes => classes.AssignableTo<IEndpoint>(), publicOnly: false)
-        .As<IEndpoint>()
-        .WithTransientLifetime()
+    scan.FromAssemblyOf<Program>().AddHandlerClasses().AddValidatorClasses().AddEndpointClasses()
 );
 
-builder.Services.TryDecorate(
-    typeof(ICommandHandler<>),
-    typeof(ValidationDecorator.CommandBaseHandler<>)
-);
-builder.Services.TryDecorate(
-    typeof(ICommandHandler<,>),
-    typeof(ValidationDecorator.CommandHandler<,>)
-);
-builder.Services.TryDecorate(typeof(IQueryHandler<,>), typeof(ValidationDecorator.QueryHandler<,>));
+builder.Services.AddValidationDecorators();
 
 var app = builder.Build();
 
