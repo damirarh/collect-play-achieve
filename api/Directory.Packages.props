@@ -4,14 +4,20 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="FluentValidation" Version="12.2.0" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="11.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.6.5" />
     <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.6.5" />
     <PackageVersion Include="Aspire.Hosting.Yarp" Version="13.6.5" />
-    <PackageVersion Include="TUnit" Version="1.83.8" />
-    <PackageVersion Include="TUnit.AspNetCore" Version="1.83.8" />
+    <PackageVersion Include="JsonAssertions.TUnit" Version="0.8.0" />
+    <PackageVersion Include="Scrutor" Version="7.0.0" />
+    <PackageVersion Include="TUnit" Version="1.87.0" />
+    <PackageVersion Include="TUnit.AspNetCore" Version="1.87.0" />
+    <PackageVersion Include="TUnit.Mocks" Version="1.87.0" />
     <PackageVersion Include="JetBrains.dotCover.Framework" Version="1.0.2" />
   </ItemGroup>
 </Project>

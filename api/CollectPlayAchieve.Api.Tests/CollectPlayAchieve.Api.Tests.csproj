@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JsonAssertions.TUnit" />
     <PackageReference Include="TUnit" />
     <PackageReference Include="TUnit.AspNetCore" />
+    <PackageReference Include="TUnit.Mocks" />
     <PackageReference Include="JetBrains.dotCover.Framework" />
     <ProjectReference Include="../CollectPlayAchieve.Api/CollectPlayAchieve.Api.csproj" />
   </ItemGroup>
